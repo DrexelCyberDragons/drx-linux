@@ -6,23 +6,28 @@ iptables-save > old-iptables.bk
 #iptables-restore < iptables.bk
 #iptables -F
 
-### Accept traffic for established sessions ?
-
+### Accept traffic for established sessions ?\
+#Firewallcmd or iptables-persistent
 iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+#mirror this?
 
 ### Basic accept chain rules
 
 ## Incoming
 
 iptables -A INPUT -p tcp --dport ssh -j ACCEPT
-iptables -A INPUT -p tcp --dport http -j ACCEPT
+#iptables -A INPUT -p tcp --dport 2049 -j ACCEPT
+#iptables -A INPUT -p tcp --dport 111 -j ACCEPT
+#iptables -A INPUT -p tcp --dport http -j ACCEPT
 #iptables -A INPUT -p tcp --dport https -j ACCEPT
 iptables -A INPUT -p tcp --dport http-alt -j ACCEPT
 
 ## Outgoing
 
 iptables -A OUTPUT -p tcp --dport ssh -j ACCEPT
-iptables -A OUTPUT -p tcp --dport http -j ACCEPT
+#iptables -A OUTPUT -p tcp --dport 2049 -j ACCEPT
+#iptables -A OUTPUT -p tcp --dport 111 -j ACCEPT
+#iptables -A OUTPUT -p tcp --dport http -j ACCEPT
 #iptables -A OUTPUT -p tcp --dport https -j ACCEPT
 iptables -A OUTPUT -p tcp --dport http-alt -j ACCEPT
 
@@ -44,7 +49,8 @@ iptables -I OUTPUT 5 -m limit --limit 5/min -j LOG --log-prefix "iptables denied
 ### Backup desired Configuration
 
 iptables-save > new-iptables.bk
+iptables-save > /etc/iptables/rules.v4
 
 #sudo apt-get install iptstate -y
-#sudo apt-get install iptables-persistent -y
-#sudo service netfilter-persistent start
+sudo apt-get install iptables-persistent -y
+sudo service netfilter-persistent start
